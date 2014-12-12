@@ -2,6 +2,25 @@
 
 {% block content %}
 
+    <div class="controls row">
+        <div class="col-md-10">
+            <h1>
+                Crawler Management
+            </h1>
+
+        </div>
+        <div class="col-md-2">
+            <form class="form-inline" role="form">
+                <div class="form-group">
+                    <label for="companyUpload">File input</label>
+                    <input type="file" id="companyUpload">
+
+                    <p class="help-block">Choose a company .CSV file to upload.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
     {% if companies %}
         <ul>
             {% for company in companies %}
