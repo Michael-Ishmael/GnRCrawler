@@ -1,0 +1,16 @@
+{% extends "__base.html" %}
+
+{% block content %}
+
+    {% if companies %}
+        <ul>
+            {% for company in companies %}
+                <li><a href="/polls/{{ company }}/">{{ company }}</a></li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
+
+{% endblock %}
+
