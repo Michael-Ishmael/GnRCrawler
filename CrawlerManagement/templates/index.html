@@ -10,26 +10,61 @@
 
         </div>
         <div class="col-md-2">
-            <form class="form-inline" role="form">
+            <form class="form-inline" role="form" enctype="multipart/form-data" method="post"
+                  action="{% url 'fileupload' %}">
+                {% csrf_token %}
                 <div class="form-group">
-                    <label for="companyUpload">File input</label>
-                    <input type="file" id="companyUpload">
-
+                    {{ uploadForm }}
                     <p class="help-block">Choose a company .CSV file to upload.</p>
                 </div>
+                <input type="submit" value="Submit"/>
             </form>
         </div>
     </div>
 
-    {% if companies %}
-        <ul>
-            {% for company in companies %}
-                <li><a href="/polls/{{ company }}/">{{ company }}</a></li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No polls are available.</p>
-    {% endif %}
+    <div class="main row">
+        <div class="col-md-4">
+            <div class="company-list">
+
+                {% if exception %}
+
+                    <div>{{ exception }}</div>
+
+                {% endif %}
+
+                {% if companies %}
+                    <ul>
+                        {% for company in companies %}
+                            <li>
+                                <address>
+                                    <strong>
+                                        <a href="{% url companydetail %}">{{ company.Name }}</a>
+                                        {{ company.Name }}</strong><br>
+                                    {% if company.AddressLine1 %} {{ company.AddressLine1 }} {% endif %}<br>
+                                    {% if company.AddressLine2 %} {{ company.AddressLine2 }} {% endif %}<br>
+                                    {% if company.AddressLine3 %} {{ company.AddressLine3 }} {% endif %}<br>
+                                    {% if company.AddressLine4 %} {{ company.AddressLine4 }} {% endif %}<br>
+                                    {% if company.AddressLine5 %} {{ company.AddressLine5 }} {% endif %}<br>
+                                </address>
+
+
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No polls are available.</p>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="company-details">
+
+            </div>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
 
 {% endblock %}
 
