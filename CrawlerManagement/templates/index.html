@@ -5,7 +5,7 @@
     <div class="controls row">
         <div class="col-md-10">
             <h1>
-                Crawler Management
+                List
             </h1>
 
         </div>
@@ -38,15 +38,20 @@
                             <li>
                                 <address>
                                     <strong>
-                                        <a href="{% url companydetail %}">{{ company.Name }}</a>
-                                        {{ company.Name }}</strong><br>
+                                        <a href="#" class="company-link">{{ company.Name }}</a></strong><br>
                                     {% if company.AddressLine1 %} {{ company.AddressLine1 }} {% endif %}<br>
                                     {% if company.AddressLine2 %} {{ company.AddressLine2 }} {% endif %}<br>
                                     {% if company.AddressLine3 %} {{ company.AddressLine3 }} {% endif %}<br>
                                     {% if company.AddressLine4 %} {{ company.AddressLine4 }} {% endif %}<br>
                                     {% if company.AddressLine5 %} {{ company.AddressLine5 }} {% endif %}<br>
                                 </address>
-
+                                <div class="stats">
+                                    <ul class="clearfix">
+                                        <li class="attribute">
+                                            <span class="label">Turnover:</span>
+                                            <span class="">{{ company.Turnover }}</span></li>
+                                    </ul>
+                                </div>
 
                             </li>
                         {% endfor %}
@@ -58,7 +63,7 @@
             </div>
         </div>
         <div class="col-md-4">
-            <div class="company-details">
+            <div id="company-details hidden">
 
             </div>
         </div>

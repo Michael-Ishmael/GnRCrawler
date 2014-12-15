@@ -13,8 +13,33 @@
 
 .company-list li {
     list-style: none;
+    margin-bottom: 20px;
 }
 
 .company-details {
-    background-color: lightblue;
+    background-color: #ccc;
+}
+
+.stats ul {
+    margin: 0;
+    padding: 0;
+}
+
+.stats li {
+    list-style: none;
+    float: left;
+}
+
+.attribute span {
+    display: inline-block;
+}
+
+.attribute .label {
+    font-weight: bold;
+    margin-right: 5px;
+    color: #080808;
+}
+
+.attribute .value {
+    margin-right: 5px;
 }
