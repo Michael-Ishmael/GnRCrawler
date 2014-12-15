@@ -3,6 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 
 from CrawlerManagement.business.data import CsvLoader
+from CrawlerManagement.business.web import WebsiteLocator
 
 
 class TestCsvLoader(TestCase):
@@ -13,3 +14,10 @@ class TestCsvLoader(TestCase):
             companies = loader.handle_uploaded_file(f)
         self.assertTrue(len(companies) > 0)
 
+
+class TestWebsiteLocator(TestCase):
+    def test_find_website(self):
+        locator = WebsiteLocator()
+
+        company_url = locator.find_website('SO303372', 'WEST ALPHATEL LLP')
+        self.assertTrue(len(company_url) > 0)

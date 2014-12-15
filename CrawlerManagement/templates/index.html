@@ -35,16 +35,19 @@
                 {% if companies %}
                     <ul>
                         {% for company in companies %}
-                            <li>
+                            <li class="company-item">
                                 <address>
                                     <strong>
-                                        <a href="#" class="company-link">{{ company.Name }}</a></strong><br>
+                                        <a href="{% url "findcompanywebsite" company.RegisteredNumber %}" class="company-link" data-ref="{{ company.RegisteredNumber }}">{{ company.Name }}</a></strong><br>
                                     {% if company.AddressLine1 %} {{ company.AddressLine1 }} {% endif %}<br>
                                     {% if company.AddressLine2 %} {{ company.AddressLine2 }} {% endif %}<br>
                                     {% if company.AddressLine3 %} {{ company.AddressLine3 }} {% endif %}<br>
                                     {% if company.AddressLine4 %} {{ company.AddressLine4 }} {% endif %}<br>
                                     {% if company.AddressLine5 %} {{ company.AddressLine5 }} {% endif %}<br>
                                 </address>
+                                <div class="url-result">
+
+                                </div>
                                 <div class="stats">
                                     <ul class="clearfix">
                                         <li class="attribute">
@@ -57,14 +60,17 @@
                         {% endfor %}
                     </ul>
                 {% else %}
-                    <p>No polls are available.</p>
+                    <p>No companies are available.</p>
                 {% endif %}
 
             </div>
         </div>
         <div class="col-md-4">
-            <div id="company-details hidden">
+            <a href="#" id="process-companies">Process Companies</a>
+            <div id="company-details" class="hidden">
+                <div class="process-status">
 
+                </div>
             </div>
         </div>
         <div class="col-md-4"></div>
