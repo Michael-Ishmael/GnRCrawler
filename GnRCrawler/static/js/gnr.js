@@ -18,13 +18,29 @@ GNR.Ui.CompanyLoader = function (container) {
     function init() {
         $('#process-companies').click(function(e){
             e.preventDefault();
-            var links = $('.company-link');
+            var items = $('.company-item');
             var linkArr = [];
-            links.each(function(i){
-                var link = $(this).attr('href');
-                var comp = $(this).text();
-                linkArr.push({link:link, comp:comp});
+            items.each(function (i) {
+                var a = $('.company-link', this);
+                var link = a.attr('href');
+                var resultDiv = $('.url-result', this);
+                var comp = a.text();
+                linkArr.push({link: link, comp: comp, resultDiv: resultDiv});
                 //_loader.ProcessCompany(companyRef);
+            });
+            getLink(linkArr, 0);
+        });
+        $('#process-company-websites').click(function (e) {
+            e.preventDefault();
+            var items = $('.company-item');
+            var linkArr = [];
+            items.each(function (i) {
+                var a = $('.url-result a', this);
+                if (a.length) {
+                    var link = a.attr('href');
+                    var resultUl = $('.stats ul', this);
+                    linkArr.push({link: link, resultUl: resultUl});
+                }
             });
             getLink(linkArr, 0);
         });
@@ -38,17 +54,78 @@ GNR.Ui.CompanyLoader = function (container) {
               url: linkArr[curIndex].link,
               success: linkSuccess,
               dataType: 'json',
+                error: linkError,
               complete: linkComplete
             }
 
         );
         function linkSuccess( data ) {
             _container.removeClass('hidden');
-            $('.process-status', _container).html(linkArr[curIndex].comp + '<br>' + JSON.stringify(data));
+            var result = '';
+            if (data.success) {
+                result = '<a href="' + data.url + '" target="_blank">' + data.url + '</a>';
+            } else {
+                result = data.message;
+            }
+            linkArr[curIndex].resultDiv.html(result);
 
         }
+
+        function linkError(x, s, e) {
+            if (e) {
+                linkArr[curIndex].resultDiv.html(e);
+            } else {
+                linkArr[curIndex].resultDiv.html('ajax error');
+            }
+        }
+
         function linkComplete(){
-            if(curIndex < linkArr.length -1) getLink(linkArr, curIndex+1)
+            if (curIndex < linkArr.length - 1) {
+                getLink(linkArr, curIndex + 1);
+            } else {
+                $('#process-company-websites').removeClass('hidden');
+            }
+        }
+    }
+
+
+    function getCompanysLink(linkArr, curIndex) {
+        $.ajax(
+            {
+                type: "POST",
+                url: linkArr[curIndex].link,
+                success: linkSuccess,
+                dataType: 'json',
+                error: linkError,
+                complete: linkComplete
+            }
+        );
+        function linkSuccess(data) {
+            _container.removeClass('hidden');
+            var result = '';
+            if (data.success) {
+                result = '<a href="' + data.url + '" target="_blank">' + data.url + '</a>';
+            } else {
+                result = data.message;
+            }
+            linkArr[curIndex].resultDiv.html(result);
+
+        }
+
+        function linkError(x, s, e) {
+            if (e) {
+                linkArr[curIndex].resultDiv.html(e);
+            } else {
+                linkArr[curIndex].resultDiv.html('ajax error');
+            }
+        }
+
+        function linkComplete() {
+            if (curIndex < linkArr.length - 1) {
+                getLink(linkArr, curIndex + 1);
+            } else {
+                $('#process-company-websites').removeClass('hidden');
+            }
         }
     }
 

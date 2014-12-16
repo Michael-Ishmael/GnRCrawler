@@ -21,3 +21,11 @@ class TestWebsiteLocator(TestCase):
 
         company_url = locator.find_website('SO303372', 'WEST ALPHATEL LLP')
         self.assertTrue(len(company_url) > 0)
+
+
+    def test_find_website_links(self):
+        locator = WebsiteLocator()
+
+        link_obj = locator.find_website_links('http://thorntons-law.co.uk')
+
+        self.assertTrue(link_obj['success'])

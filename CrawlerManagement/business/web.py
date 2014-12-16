@@ -2,7 +2,60 @@ __author__ = 'funhead'
 
 import urllib2
 import urlparse
-from bs4 import BeautifulSoup
+
+from bs4 import BeautifulSoup, SoupStrainer
+
+
+class CompanyWebLink:
+    def __init__(self, link, title):
+        self.link = link
+        self.title = title.strip()
+
+    def __unicode__(self):
+        str = ""
+        if self.title and len(self.title):
+            str += self.title + ": "
+        str += self.link
+        return str
+
+    def __str__(self):
+        return self.__unicode__()
+
+
+class CompanyScrapeResult:
+    def __init__(self, company_name, company_url):
+        self.company_name = company_name
+        self.company_url = company_url
+        self.url_parts = urlparse.urlparse(company_url)
+        self.all_links = []
+        self.direct_links = []
+
+
+    def test_add_link(self, url, title):
+        stored_link = None
+
+        if url == "#":
+            return
+
+        if url.startswith('/'):
+            stored_link = self.url_parts.scheme + '://' + self.url_parts.netloc + url
+        elif url.startswith('http'):
+            if self.url_parts.hostname in url:
+                stored_link = url
+        elif url.startswith('#'):
+            stored_link = self.company_url + url
+        else:
+            stored_link = self.company_url + '/' + url
+
+        if stored_link and stored_link not in self.all_links:
+            link_obj = CompanyWebLink(stored_link, title)
+            self.all_links.append(link_obj)
+            link_parts = urlparse.urlparse(stored_link)
+            depth = link_parts.path.count('/')
+            if depth == 1:
+                self.direct_links.append(link_obj)
+
+
 
 
 class WebsiteLocator:
@@ -16,14 +69,33 @@ class WebsiteLocator:
             response = urllib2.urlopen(target_url)
             html = response.read()
             soup = BeautifulSoup(html)
-            site_link = soup.find('div','website-area').a
-            if site_link:
-                if site_link.text == 'Add Website':
-                    return {"success": False, "message": "Company doesn't have a website"}
+            site_link_area = soup.find('div', 'website-area')
+            if site_link_area and site_link_area.a:
+                site_link = site_link_area.a
+                if site_link:
+                    if site_link.text == 'Add Website':
+                        return {"success": False, "message": "Company doesn't have a website"}
+                    else:
+                        return {"success": True, "url": site_link.get('href')}
                 else:
-                    return {"success": True, "url": site_link.get('href')}
+                    return {"success": False, "message": "Link not found"}
             else:
                 return {"success": False, "message": "Link area not found"}
         except Exception as ex:
             return {"success": False, "message": ex.message}
 
+
+    def find_website_links(self, company_url):
+        try:
+            result = CompanyScrapeResult("test", company_url)
+            response = urllib2.urlopen(company_url)
+            for link in BeautifulSoup(response, "html.parser", parse_only=SoupStrainer('a')):
+                if "href" in link.attrs and link.attrs['href'] != '#':
+                    url = link.attrs["href"]
+                    title = link.text
+                    if len(title.strip()) == 0 and 'title' in link.attrs:
+                        title = link.attrs['title']
+                    result.test_add_link(url, title)
+            return {"success": True, "result": result}
+        except Exception as ex:
+            return {"success": False, "message": ex.message}

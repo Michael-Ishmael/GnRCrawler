@@ -38,21 +38,27 @@
                             <li class="company-item">
                                 <address>
                                     <strong>
-                                        <a href="{% url "findcompanywebsite" company.RegisteredNumber %}" class="company-link" data-ref="{{ company.RegisteredNumber }}">{{ company.Name }}</a></strong><br>
-                                    {% if company.AddressLine1 %} {{ company.AddressLine1 }} {% endif %}<br>
-                                    {% if company.AddressLine2 %} {{ company.AddressLine2 }} {% endif %}<br>
-                                    {% if company.AddressLine3 %} {{ company.AddressLine3 }} {% endif %}<br>
-                                    {% if company.AddressLine4 %} {{ company.AddressLine4 }} {% endif %}<br>
-                                    {% if company.AddressLine5 %} {{ company.AddressLine5 }} {% endif %}<br>
+                                        <a href="{% url "findcompanywebsite" company.RegisteredNumber %}"
+                                           class="company-link"
+                                           data-ref="{{ company.RegisteredNumber }}">{{ company.Name }}</a></strong>
+                                    <b>{{ company.RegisteredNumber }}</b><br>
+                                    {% if company.AddressLine1 %} {{ company.AddressLine1 }} <br> {% endif %}
+                                    {% if company.AddressLine2 %} {{ company.AddressLine2 }} <br> {% endif %}
+                                    {% if company.AddressLine3 %} {{ company.AddressLine3 }} <br> {% endif %}
+                                    {% if company.AddressLine4 %} {{ company.AddressLine4 }} <br> {% endif %}
+                                    {% if company.AddressLine5 %} {{ company.AddressLine5 }} <br> {% endif %}
                                 </address>
-                                <div class="url-result">
-
-                                </div>
                                 <div class="stats">
                                     <ul class="clearfix">
-                                        <li class="attribute">
-                                            <span class="label">Turnover:</span>
-                                            <span class="">{{ company.Turnover }}</span></li>
+                                        <li>
+                                            <span class="stat-label">Turnover:</span>
+                                            <span class="value">{{ company.Turnover }}</span></li>
+                                        <li>
+                                            <span class="stat-label">Website:</span>
+                                            <span class="url-result">
+
+                                            </span>
+                                        </li>
                                     </ul>
                                 </div>
 
@@ -66,7 +72,9 @@
             </div>
         </div>
         <div class="col-md-4">
-            <a href="#" id="process-companies">Process Companies</a>
+            <a href="#" id="process-companies">Process Companies</a><br>
+            <a href="#" id="process-company-websites" class="hidden">Process Company Websites</a>
+
             <div id="company-details" class="hidden">
                 <div class="process-status">
 
