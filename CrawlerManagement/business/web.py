@@ -1,9 +1,10 @@
-import re
+import json
 
 __author__ = 'funhead'
 
 import urllib2
 import urlparse
+from calais.base.client import Calais
 
 from bs4 import BeautifulSoup, SoupStrainer
 
@@ -23,6 +24,9 @@ class CompanyWebLink:
     def __str__(self):
         return self.__unicode__()
 
+    def to_json(self):
+        return json.dumps({"title": self.title, "link": self.link})
+
 
 class CompanyScrapeResult:
     def __init__(self, company_name, company_url):
@@ -31,6 +35,8 @@ class CompanyScrapeResult:
         self.url_parts = urlparse.urlparse(company_url)
         self.all_links = []
         self.direct_links = []
+        self.success = True
+        self.message = ""
 
 
     def test_add_link(self, url, title):
@@ -57,10 +63,20 @@ class CompanyScrapeResult:
             if depth == 1:
                 self.direct_links.append(link_obj)
 
+    def to_json_dict(self):
+        return {
+            "success": self.success,
+            "message": self.message,
+            "links": [x.__dict__ for x in self.direct_links]
+        }
+
+
+
 
 class WebsiteLocator:
     def __init__(self):
         self.rootSite = "http://companycheck.co.uk/company/"
+        API_KEY = "n6fmydbypqcp5u8wrbxu725v"
 
     def find_website(self, company_ref):
         target_url = urlparse.urljoin(self.rootSite, company_ref)
@@ -85,8 +101,8 @@ class WebsiteLocator:
 
 
     def find_website_links(self, company_url):
+        result = CompanyScrapeResult("test", company_url)
         try:
-            result = CompanyScrapeResult("test", company_url)
             response = urllib2.urlopen(company_url)
             for link in BeautifulSoup(response, "html.parser", parse_only=SoupStrainer('a')):
                 if "href" in link.attrs and link.attrs['href'] != '#':
@@ -95,9 +111,11 @@ class WebsiteLocator:
                     if len(title.strip()) == 0 and 'title' in link.attrs:
                         title = link.attrs['title']
                     result.test_add_link(url, title)
-            return {"success": True, "result": result}
+            result.success = True
         except Exception as ex:
-            return {"success": False, "message": ex.message}
+            result.success = False
+            result.message = ex.message
+        return result
 
 
     def find_website_text(self, page_url, min_len):
@@ -126,3 +144,12 @@ class WebsiteLocator:
         except Exception as ex:
             return False
 
+            result.success = False
+            result.message = ex.message
+        return result
+
+
+    def get_calais_tags(self, url):
+        calais = Calais(self.API_KEY, submitter="python-calais demo")
+        result = calais.analyze_url(url)
+        return result;

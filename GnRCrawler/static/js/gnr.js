@@ -112,7 +112,8 @@ GNR.Ui.CompanyLoader = function (container) {
         $.ajax(
             {
                 type: "POST",
-                url: linkArr[curIndex].link,
+                url: "http://127.0.0.1:8000/findcompanylinks/",
+                data: {"url": linkArr[curIndex].link},
                 success: linkSuccess,
                 dataType: 'json',
                 error: linkError,
@@ -124,7 +125,7 @@ GNR.Ui.CompanyLoader = function (container) {
             if (data.success) {
                 for (var i = 0; i < data.links.length; i++) {
                     var link = data.links[i];
-                    var li = $('<li><span class="stat-label">'+ link.title +':</span><span class="top-link">'+ link.url +'</span></li>');
+                    var li = $('<li><span class="stat-label">' + link.title + ':</span><span class="top-link">' + link.link + '</span></li>');
                     linkArr.resultUl.append(li);
                 }
             } else {
