@@ -1,3 +1,5 @@
+import re
+
 __author__ = 'funhead'
 
 import urllib2
@@ -56,10 +58,7 @@ class CompanyScrapeResult:
                 self.direct_links.append(link_obj)
 
 
-
-
 class WebsiteLocator:
-
     def __init__(self):
         self.rootSite = "http://companycheck.co.uk/company/"
 
@@ -99,3 +98,31 @@ class WebsiteLocator:
             return {"success": True, "result": result}
         except Exception as ex:
             return {"success": False, "message": ex.message}
+
+
+    def find_website_text(self, page_url, min_len):
+        try:
+            response = urllib2.urlopen(page_url)
+            soup = BeautifulSoup(response, 'html.parser')
+            [s.extract() for s in soup(['style', 'script', '[document]', 'head', 'title'])]
+            texts = soup.findAll(text=True)
+
+            visible_texts = filter(self.visible, texts)
+            visible_texts = filter(lambda t: len(t.split()) >= min_len, visible_texts)
+            return {"success": True, "result": visible_texts}
+        except Exception as ex:
+            return {"success": False, "message": ex.message}
+
+
+    def visible(self, element):
+        try:
+            if element.parent.name in ['style', 'script', '[document]', 'head', 'title']:
+                return False
+            elif element.strip() == '':
+                return False
+            # elif re.match('<!--.*-->', str(element)):
+            #     return False
+            return True
+        except Exception as ex:
+            return False
+

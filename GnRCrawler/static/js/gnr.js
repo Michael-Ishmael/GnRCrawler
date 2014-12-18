@@ -30,6 +30,25 @@ GNR.Ui.CompanyLoader = function (container) {
             });
             getLink(linkArr, 0);
         });
+
+        $('#filter-companies').click(function(e){
+            e.preventDefault();
+
+            var items = $('.company-item');
+            var remItems = [];
+            items.each(function (i) {
+                var a = $('.url-result a', this);
+                if(!a.length){
+                    remItems.push(items[i]);
+                }
+            });
+            for (var i = 0; i < remItems.length; i++) {
+                var item = remItems[i];
+                item.remove();
+            }
+            $('#process-company-websites').removeClass('hidden');
+        });
+
         $('#process-company-websites').click(function (e) {
             e.preventDefault();
             var items = $('.company-item');
@@ -42,7 +61,7 @@ GNR.Ui.CompanyLoader = function (container) {
                     linkArr.push({link: link, resultUl: resultUl});
                 }
             });
-            getLink(linkArr, 0);
+            getCompanyLinks(linkArr, 0);
         });
         initAjax();
     }
@@ -83,13 +102,13 @@ GNR.Ui.CompanyLoader = function (container) {
             if (curIndex < linkArr.length - 1) {
                 getLink(linkArr, curIndex + 1);
             } else {
-                $('#process-company-websites').removeClass('hidden');
+                $('#filter-companies').removeClass('hidden');
             }
         }
     }
 
 
-    function getCompanysLink(linkArr, curIndex) {
+    function getCompanyLinks(linkArr, curIndex) {
         $.ajax(
             {
                 type: "POST",
@@ -101,22 +120,24 @@ GNR.Ui.CompanyLoader = function (container) {
             }
         );
         function linkSuccess(data) {
-            _container.removeClass('hidden');
-            var result = '';
+            linkArr.resultUl.append('<li><br></li>')
             if (data.success) {
-                result = '<a href="' + data.url + '" target="_blank">' + data.url + '</a>';
+                for (var i = 0; i < data.links.length; i++) {
+                    var link = data.links[i];
+                    var li = $('<li><span class="stat-label">'+ link.title +':</span><span class="top-link">'+ link.url +'</span></li>');
+                    linkArr.resultUl.append(li);
+                }
             } else {
-                result = data.message;
+                linkArr.resultUl.append('<li><span class="stat-label">Top Link Error:</span><span class="top-link">'+ data.message +'</span></li>');
             }
-            linkArr[curIndex].resultDiv.html(result);
 
         }
 
         function linkError(x, s, e) {
             if (e) {
-                linkArr[curIndex].resultDiv.html(e);
+                linkArr[curIndex].resultUl.append('<li>'+e+'</li>')
             } else {
-                linkArr[curIndex].resultDiv.html('ajax error');
+                linkArr[curIndex].resultUl.append('<li>'+'ajax error'+'</li>');
             }
         }
 
@@ -124,7 +145,7 @@ GNR.Ui.CompanyLoader = function (container) {
             if (curIndex < linkArr.length - 1) {
                 getLink(linkArr, curIndex + 1);
             } else {
-                $('#process-company-websites').removeClass('hidden');
+                $('#filter-companies').removeClass('hidden');
             }
         }
     }

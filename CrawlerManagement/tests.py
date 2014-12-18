@@ -29,3 +29,11 @@ class TestWebsiteLocator(TestCase):
         link_obj = locator.find_website_links('http://thorntons-law.co.uk')
 
         self.assertTrue(link_obj['success'])
+
+
+    def test_find_page_text(self):
+        locator = WebsiteLocator()
+
+        link_obj = locator.find_website_text('http://thorntons-law.co.uk/about-us', 20)
+
+        self.assertTrue(link_obj['success'])
